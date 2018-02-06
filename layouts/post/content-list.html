@@ -1,0 +1,21 @@
+<article class="post">
+    {{ .Render "header" }}
+    {{ .Render "featured" }}
+    
+    <div class="preview-image">
+    {{ range .Params.images }}
+        <img src="{{ . }}" class="4u">
+    {{ end }}
+    </div>
+    
+    <p>{{ printf "%s" .Summary | markdownify }}</p>
+
+    <div class="clearfix"></div>
+
+    <footer>
+        <ul class="actions">
+            <li><a href="{{ .Permalink }}" class="button big">Continue Reading</a></li>
+        </ul>
+        {{ .Render "footer-category" }}
+    </footer>
+</article>

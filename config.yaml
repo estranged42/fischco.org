@@ -1,0 +1,136 @@
+---
+baseurl: "http://www.fischco.org/"
+languageCode: "en-us"
+title: "fischco.org "
+theme: "hugo-future-imperfect"
+preserveTaxonomyNames: true
+paginate: 50
+# disqusShortname: "shortname"
+googleAnalytics: "UA-610813-2"
+
+params:
+    # Sets the meta tag description, usually reserved for the main page
+    description         : "fischco.org"
+    # This will appear on the top left of the navigation bar
+    navbarTitle         : "fischco.org"
+    # Social media buttons that appear on the sidebar
+    socialAppearAtTop   : true
+    socialAppearAtBottom: true
+    # set this to the section name if section is not post
+    viewMorePostLink    : "/blog/"
+
+    enableEmoji: true
+
+    pygmentsCodefences: true
+    pygmentsOptions: "linenos=inline"
+
+# Optional Params
+    categoriesByCount   : true
+    includeReadingTime  : true
+    # The set of favicons used are based on the write-up from this link:
+    # https://github.com/audreyr/favicon-cheat-sheet
+    # Please see the favicon partial template for more information
+    loadFavicon         : false
+    faviconVersion      : ""
+
+    # Load custom CSS or JavaScript files. This replaces the deprecated params
+    # minifiedFilesCSS and minifiedFilesJS. The variable is an array so that you
+    # can load multiple files if necessary. You can also load the standard theme
+    # files by adding the value, "default".
+    # customCSS           : ["default", "/path/to/file"]
+    # customJS            : ["default", "/path/to/file"]
+    #
+    # Loading min files for exampleSite
+    #customCSS           : ["default", "/prism/prism.css", "/css/fischco.css"]
+    #customJS            : ["default", "/prism/prism.js"]
+    customCSS           : ["default", "/css/fischco.css"]
+    customJS            : ["default"]
+
+# parms.intro will appear on the sidebar
+# This is optional, but it's suggested to use
+    intro:
+      header   : "fischco.org"
+      paragraph: "Crazy Fischers and Friends"
+      about    : "Lorem ipsum."
+
+# This will also appear on the sidebar.
+# A width of less than 100px is recommended
+# This is optional
+      pic:
+        src      : "/images/f.png"
+        # modify your picture in the shape of a circle or
+        # future imperfect's hexagonal shape
+        circle   : true
+        imperfect: false
+        width    : ""
+        alt      : "Logo?"
+
+# Adjust the amount of recent posts on the sidebar.
+# This is optional. The default value 5 will be used
+    postAmount:
+      sidebar: 5
+
+# Set up your menu items in the navigation bar
+# You can use identifier to prepend a font awesome icon to your text
+menu:
+  main:
+  - name: "Family"
+    url: "/blog"
+    identifier: "fa fa-newspaper-o"
+    weight: 1
+
+  - name: "Technica"
+    url: "/technica"
+    identifier: "fa fa-code"
+    weight: 2
+
+  - name: "Mark's Portfolio"
+    url: "http://portfolio.fischco.org"
+    identifier: "fa fa-briefcase"
+    weight: 3
+
+  - name: "Angela's Journal"
+    url: "/aj"
+    identifier: "fa fa-pencil-square-o"
+    weight: 4
+
+  - name: "Categories"
+    url: "/categories/"
+    weight: 10
+
+  - name: "About"
+    url: "/about"
+    weight: 20
+
+# Insert your username and the icon will apear on the page as long as
+# socialAppearAtTop or socialAppearAtBottom is set to true in the params area
+# The social media icons will appear on the sidebar
+social:
+    github         : "estrange42"
+    bitbucket      : ""
+    jsfiddle       : ""
+    codepen        : ""
+    foursquare     : ""
+    dribbble       : ""
+    deviantart     : ""
+    behance        : ""
+    flickr         : ""
+    instagram      : ""
+    youtube        : ""
+    vimeo          : ""
+    vine           : ""
+    medium         : ""
+    wordpress      : ""
+    tumblr         : ""
+    xing           : ""
+    linkedin       : ""
+    slideshare     : ""
+    stackoverflow  : ""
+    reddit         : ""
+    pinterest      : ""
+    googleplus     : ""
+    facebook       : ""
+    facebook_admin : ""
+    twitter_domain : ""
+    twitter        : "estranged"
+    email          : ""

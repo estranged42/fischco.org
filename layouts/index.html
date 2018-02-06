@@ -1,0 +1,15 @@
+{{ partial "header" . }}
+    {{ $.Scratch.Set "shareNav" true }}
+    {{ partial "navbar" . }}
+    <!-- Main -->
+    <div id="main">
+        {{ $.Scratch.Set "recentPosts" (where .Site.Pages "Section" "blog") }}
+        {{ $pages := $.Scratch.Get "recentPosts" }}
+        {{ range first 5 (where $pages "Type" "post") }}
+            {{ .Render "content-single" }}
+
+            {{ partial "share-menu" . }}
+        {{ end }}
+    </div>
+    {{ partial "sidebar" . }}
+{{ partial "footer" . }}

@@ -1,0 +1,74 @@
+body {
+  background: #222330;
+  color: #ccc;
+}
+
+#header {
+  background-color: #363845;
+  opacity: 0.95;
+}
+
+#header .links a, 
+#header .main ul li > a {
+  color: inherit;
+  opacity: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #ddd;
+}
+
+article.post p, article.post h1, article.post h2, article.post h3, article.post h4 {
+  color: #000;
+}
+
+input[type="submit"], input[type="reset"], input[type="button"], button, .button {
+  box-shadow: inset 0 0 0 1px rgba(221, 221, 221, 0.65);
+  color: #ccc !important;
+}
+
+.post {
+  background: #eee;
+  color: #222;
+}
+
+#sidebar > * {
+  margin: 2em 0 0 0;
+  padding: 2em 0 0 0;
+}
+
+ul.posts li {
+  margin: 1em 0 0 0;
+  padding: 1em 0 0 0;
+}
+
+#social-share .share-btn {
+  padding: 0.1em;
+  width: 3em;
+}
+
+#ZoomCapDiv table td {
+  padding: 0;
+  vertical-align: middle;
+}
+
+.preview-image img {
+  float: right;
+  padding: 1em 0 0 1em;
+}
+
+.clearfix {
+  clear: both;
+}
+
+# 
+# section#social-share {
+#   float: right;
+# }
+# 
+# section#social-share:after {
+#   content: '';
+#   display: block;
+#   clear: both;
+# }
+# 

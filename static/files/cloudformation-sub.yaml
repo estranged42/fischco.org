@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Route53 Hosted Zone
+
+Parameters:
+  HostedZoneName:
+    Type: String
+  SubDomain:
+    Type: String
+
+Resources:
+  AppDnsRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Sub "${HostedZoneName}."
+      Name:
+        Fn::Sub:
+        - "myapp.${Sub}.${ZoneName}."
+        - ZoneName: !Ref HostedZoneName
+          Sub: !Ref SubDomain
+      Type: CNAME
+      TTL: '900'
+      ResourceRecords:
+      - www.fischco.org
