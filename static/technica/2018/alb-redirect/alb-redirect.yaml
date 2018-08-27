@@ -1,0 +1,132 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Sample Application Load Balancer HTTPS Redirection"
+
+# Parameters
+# ----------
+#
+# These are the input parameters for this template. All of these parameters
+# must be supplied for this template to be deployed.
+Parameters:
+  # Load Balancer Settings
+  VPCID:
+    Description: Target VPC
+    Type: AWS::EC2::VPC::Id
+  LBSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: public subnets for load balancer (2 or more)
+  SSLCertificateARN:
+    Type: String
+    Description: Full ARN of the SSL Certificate to use on the load balancer
+
+
+# Resources
+# ---------
+#
+# This is the EC2 instance deployed by the template.
+#
+Resources:
+
+
+  # #### Load Balancer
+  #
+  # The load balancer (ALB) constructor along with the Security Group
+  # that allows client traffic to the ALB on ports 80 & 443
+  LoadBalancer:
+      Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+      Properties:
+        Scheme: internet-facing
+        Subnets: !Ref LBSubnets
+        LoadBalancerAttributes:
+        - Key: idle_timeout.timeout_seconds
+          Value: '50'
+        SecurityGroups:
+        - !Ref AlbSecurityGroup
+
+  # #### Add to Load Balancer
+  #
+  # #### Target Group
+  #
+  # Define the Target Group for adding Instances to the ALB
+  # as well as the health checks for those Instances
+  AlbTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 60
+      UnhealthyThresholdCount: 10
+      HealthCheckPath: /
+      Matcher:
+        HttpCode: "200-399"
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref VPCID
+
+  # #### ALB Listeners definitions
+  #
+  AlbListener80:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+      - Type: forward
+        TargetGroupArn:
+          Ref: AlbTargetGroup
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: HTTP
+  AlbListener443:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+      - Type: forward
+        TargetGroupArn:
+          Ref: AlbTargetGroup
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      Certificates: 
+      - CertificateArn: !Ref SSLCertificateARN
+
+  RedirectListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+      - Type: redirect
+        RedirectConfig:
+          Protocol: HTTPS
+          Port: 443
+      Conditions:
+      - Field: host-header
+        Values:
+        - "*.arizona.edu"
+      ListenerArn: !Ref AlbListener80
+      Priority: 1
+
+  # #### ALB Security Group
+  #
+  AlbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Allow external traffic to load balancer'
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: "tcp"
+          FromPort: "80"
+          ToPort: "80"  
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: "tcp"
+          FromPort: "443"
+          ToPort: "443"
+
+
+# Outputs
+# ---------
+#
+# Output values that can be viewed from the AWS CloudFormation console.
+#  
+Outputs:
+  LoadBalancerName:
+    Description: The ALB Internal DNS Name
+    Value: !GetAtt LoadBalancer.DNSName
+    Export:
+      Name: !Sub "${AWS::StackName}-alb-name"
+
