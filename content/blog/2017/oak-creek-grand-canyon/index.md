@@ -24,7 +24,7 @@ We first drove up to Sedona, and camped at the north end of Oak Creek Canyon at 
 
 Angela planned all the meals, and split cooking with me. We cooked some on our camp stove, and some over the fire. Cuddling up near the fire at night was fun!
 
-{{< img-fit
+{{< img-fit2
     "6u" "oakcreek-cooking.jpg" "Cooking on the fire"
     "6u" "oakcreek-01.jpg" "Darla and Kirin sitting on rocks in the middle of Oak Creek"
     "6u" "oakcreek-fire.jpg" "Campfire"
@@ -34,14 +34,14 @@ Angela planned all the meals, and split cooking with me. We cooked some on our c
 
 While chopping wood for the fire, I somehow managed to fling a wood chip up and hit the back window of the van, which shattered the whole thing.  It was quite loud, and made a terrible mess...
 
-{{< img-fit
-    "4u" "oakcreek-window01.jpg" "Broken Van Window"
-    "4u" "oakcreek-window02.jpg" ""
+{{< img-fit2
+    "6x6" "oakcreek-window01.jpg" "Broken Van Window"
+    "6x6" "oakcreek-window02.jpg" ""
     "/blog/2017/canyon" >}}
 
 The next day we set off to find some hiking, which was not hard and very beautiful!  We also stopped in Sedona to browse through the shops.  We came across this fantastic little candle making shop which just enthralled the kids for over an hour. They're this neat layered construction which glows when you light them.
 
-{{< img-fit
+{{< img-fit2
     "6u" "oakcreek-02.jpg" "Oak Creek Canyon"
     "6u" "oakcreek-hiking.jpg" "Hiking in Oak Creek Canyon"
     "6u" "oakcreek-hiking02.jpg" "Family Portrait down in Oak Creek Canyon"
@@ -53,15 +53,15 @@ The next day we set off to find some hiking, which was not hard and very beautif
 
 Next we packed up camp and drove north to Flagstaff to get the van window fixed. Taking a break in the middle and spending one night in a hotel was nice too!
 
-{{< img-fit
-    "8u" "flag-hotel.jpg" "Mark in a hotel in Flagstaff"
+{{< img-fit2
+    "12x4" "flag-hotel.jpg" "Mark in a hotel in Flagstaff"
     "/blog/2017/canyon" >}}
 
 ## Grand Canyon
 
 After a quick overnight in Flagstaff it was off to the Grand Canyon! We set up camp at Mather Campground. The girls were a great help at clearing out the campsite.  Carrying rocks around quickly led to them setting up an Adélie Penguin rock art trading colony.
 
-{{< img-fit
+{{< img-fit2
     "6u" "grandcanyon-rocks01.jpg" "Darla clearing the campsite"
     "6u" "grandcanyon-rocks02.jpg" "Adélie Penguin Colony"
     "6u" "grandcanyon-rocks03.jpg" "Kirin carving rock art"
@@ -70,14 +70,14 @@ After a quick overnight in Flagstaff it was off to the Grand Canyon! We set up c
 
 After camp was set up we drove off to Yaki point to look around. There was a group of researchers there counting different birds the flew overhead trying to track migration patterns.  We just saw crows.
 
-{{< img-fit
+{{< img-fit2
     "6u" "yaki-01.jpg" ""
     "6u" "yaki-02.jpg" ""
     "/blog/2017/canyon" >}}
 
 The next day we all headed over to Bright Angel lodge to do some hiking down the trail. Angela and Darla came down Bright Angel Trail about half a mile before turning back.  Kirin and I made it down a bit farther. We didn't quite get to the 2 mile house, but I think we got pretty close.
 
-{{< img-fit
+{{< img-fit2
     "6u" "bright-angel-00.jpg" ""
     "6u" "bright-angel-03.jpg" ""
     "4u" "bright-angel-04.jpg" ""
@@ -90,7 +90,7 @@ The next day we all headed over to Bright Angel lodge to do some hiking down the
 
 After hiking we came back up and met up with everyone at El Tovar Hotel to collapse for a while. We also wandered through the Hopi House and vowed to come back some day with about $10,000 to spend there.
 
-{{< img-fit
+{{< img-fit2
     "4u" "eltovar-01.jpg" ""
     "4u" "hopehouse-rugs.jpg" ""
     "4u" "hopihouse-sheep.jpg" ""
@@ -107,7 +107,7 @@ After hiking we came back up and met up with everyone at El Tovar Hotel to colla
 
 On our way back from the Canyon, we stopped by Arcosanti to visit Jeff. Pretty interesting place they've got out there!
 
-{{< img-fit
+{{< img-fit2
     "4u" "arco-01.jpg" ""
     "4u" "arco-02.jpg" ""
     "4u" "arco-03.jpg" ""
