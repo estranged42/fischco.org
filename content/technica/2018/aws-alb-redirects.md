@@ -34,10 +34,10 @@ Now we can do this with Application Load Balancers!
 * You are familiar with AWS [Application Load Balancers][alb], [Listeners][listeners] and [Target Groups][tgs].
 * You have a decent familiarity with AWS [CloudFormation][] syntax.
 
-[alb]: x
-[listeners]: x
-[tgs]: x
-[CloudFormation]: x 
+[alb]: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html
+[listeners]: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html
+[tgs]: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html
+[CloudFormation]: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html
 
 ## AWS Web Console
 
