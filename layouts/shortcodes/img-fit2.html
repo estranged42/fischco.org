@@ -50,18 +50,21 @@
         {{ range first $numOfParams .Params }}
             {{ if eq ($.Scratch.Get "count") 1 }}
                 {{ $.Scratch.Set "classString" . }}
-                {{ if eq . "12u" }}
+                {{ $.Scratch.Set "imgAction" "resize" }}
+                {{ if hasPrefix . "rs" }}
+                  <!-- resize format should be:
+                      rs:widthxheight:[resize|fit|fill]:classString
+                      ex:    rs:1000x500:fill:6u
+                  -->
+                  {{ $params := (split . ":") }}
+                  {{ $.Scratch.Set "resize" (index $params 1) }}
+                  {{ $.Scratch.Set "imgAction" (index $params 2) }}
+                  {{ $.Scratch.Set "classString" (index $params 3) }}
+
+                {{ else if eq . "12u" }}
                   {{ $.Scratch.Set "resize" "1000x" }}
                 {{ else if eq . "6u" }}
                   {{ $.Scratch.Set "resize" "500x" }}
-                {{ else if eq . "12x4" }}
-                  {{ $.Scratch.Set "resize" "1200x600" }}
-                  {{ $.Scratch.Set "imgAction" "fill" }}
-                  {{ $.Scratch.Set "classString" "12u" }}
-                {{ else if eq . "6x6" }}
-                  {{ $.Scratch.Set "resize" "600x600" }}
-                  {{ $.Scratch.Set "imgAction" "fill" }}
-                  {{ $.Scratch.Set "classString" "6u" }}
                 {{ else }}
                   {{ $.Scratch.Set "resize" "300x" }}
                 {{ end }}
@@ -81,6 +84,8 @@
                       {{ $.Scratch.Set "resizeImage" ($original.Resize ($.Scratch.Get "resize")) }}
                     {{ else if eq ($.Scratch.Get "imgAction") "fill" }}
                       {{ $.Scratch.Set "resizeImage" ($original.Fill ($.Scratch.Get "resize")) }}
+                    {{ else if eq ($.Scratch.Get "imgAction") "fit" }}
+                      {{ $.Scratch.Set "resizeImage" ($original.Fit ($.Scratch.Get "resize")) }}
                     {{ else }}
                       {{ $.Scratch.Set "resizeImage" ($original.Resize ($.Scratch.Get "resize")) }}
                     {{ end }}

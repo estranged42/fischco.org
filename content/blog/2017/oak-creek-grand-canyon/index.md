@@ -25,9 +25,9 @@ We first drove up to Sedona, and camped at the north end of Oak Creek Canyon at 
 Angela planned all the meals, and split cooking with me. We cooked some on our camp stove, and some over the fire. Cuddling up near the fire at night was fun!
 
 {{< img-fit2
-    "6u" "oakcreek-cooking.jpg" "Cooking on the fire"
-    "6u" "oakcreek-01.jpg" "Darla and Kirin sitting on rocks in the middle of Oak Creek"
-    "6u" "oakcreek-fire.jpg" "Campfire"
+    "rs:500x765:fill:6u" "oakcreek-cooking.jpg" "Cooking on the fire"
+    "rs:500x:resize:6u" "oakcreek-01.jpg" "Darla and Kirin sitting on rocks in the middle of Oak Creek"
+    "rs:500x:resize:6u" "oakcreek-fire.jpg" "Campfire"
     "/blog/2017/canyon" >}}
 
 [pineflat]: https://www.recreation.gov/camping/pine-flat-campground-west/r/campgroundDetails.do?contractCode=NRSO&parkId=70645
@@ -35,8 +35,8 @@ Angela planned all the meals, and split cooking with me. We cooked some on our c
 While chopping wood for the fire, I somehow managed to fling a wood chip up and hit the back window of the van, which shattered the whole thing.  It was quite loud, and made a terrible mess...
 
 {{< img-fit2
-    "6x6" "oakcreek-window01.jpg" "Broken Van Window"
-    "6x6" "oakcreek-window02.jpg" ""
+    "rs:600x600:fill:6u" "oakcreek-window01.jpg" "Broken Van Window"
+    "rs:600x600:fill:6u" "oakcreek-window02.jpg" ""
     "/blog/2017/canyon" >}}
 
 The next day we set off to find some hiking, which was not hard and very beautiful!  We also stopped in Sedona to browse through the shops.  We came across this fantastic little candle making shop which just enthralled the kids for over an hour. They're this neat layered construction which glows when you light them.
@@ -54,7 +54,7 @@ The next day we set off to find some hiking, which was not hard and very beautif
 Next we packed up camp and drove north to Flagstaff to get the van window fixed. Taking a break in the middle and spending one night in a hotel was nice too!
 
 {{< img-fit2
-    "12x4" "flag-hotel.jpg" "Mark in a hotel in Flagstaff"
+    "rs:1000x500 center:fill:12u" "flag-hotel.jpg" "Mark in a hotel in Flagstaff"
     "/blog/2017/canyon" >}}
 
 ## Grand Canyon
