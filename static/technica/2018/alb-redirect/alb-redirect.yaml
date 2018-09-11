@@ -1,6 +1,11 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "Sample Application Load Balancer HTTPS Redirection"
 
+# Important!
+# This template doesn't actually work yet. AWS CloudFormation does not yet support 
+# `redirect` as a ListenerRule type. I've stubbed this template out in anticipation
+# of CloudFormation support and will update this once that happens.
+
 # Parameters
 # ----------
 #
@@ -85,6 +90,12 @@ Resources:
       Certificates: 
       - CertificateArn: !Ref SSLCertificateARN
 
+  # Important!
+  # This template doesn't actually work yet. AWS CloudFormation does not yet support 
+  # `redirect` as a ListenerRule type. I've stubbed this template out in anticipation
+  # of CloudFormation support and will update this once that happens.
+  # I expect the following documentation to be updated when that happens, so keep an eye out!
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticloadbalancingv2-listenerrule-actions.html
   RedirectListenerRule:
     Type: AWS::ElasticLoadBalancingV2::ListenerRule
     Properties:
