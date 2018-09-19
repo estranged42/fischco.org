@@ -65,18 +65,6 @@ Resources:
       Protocol: HTTP
       VpcId: !Ref VPCID
 
-  # #### ALB Listeners definitions
-  #
-  AlbListener80:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      DefaultActions:
-      - Type: forward
-        TargetGroupArn:
-          Ref: AlbTargetGroup
-      LoadBalancerArn: !Ref LoadBalancer
-      Port: 80
-      Protocol: HTTP
   AlbListener443:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -91,25 +79,27 @@ Resources:
       - CertificateArn: !Ref SSLCertificateARN
 
   # Important!
-  # This template doesn't actually work yet. AWS CloudFormation does not yet support 
+  # This part doesn't actually work yet. AWS CloudFormation does not yet support 
   # `redirect` as a ListenerRule type. I've stubbed this template out in anticipation
   # of CloudFormation support and will update this once that happens.
   # I expect the following documentation to be updated when that happens, so keep an eye out!
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticloadbalancingv2-listenerrule-actions.html
-  RedirectListenerRule:
-    Type: AWS::ElasticLoadBalancingV2::ListenerRule
-    Properties:
-      Actions:
-      - Type: redirect
-        RedirectConfig:
-          Protocol: HTTPS
-          Port: 443
-      Conditions:
-      - Field: host-header
-        Values:
-        - "*.arizona.edu"
-      ListenerArn: !Ref AlbListener80
-      Priority: 1
+  #
+  # AlbListener80:
+  #   Type: AWS::ElasticLoadBalancingV2::Listener
+  #   Properties:
+  #     DefaultActions:
+  #     - Type: redirect
+  #       RedirectConfig:
+  #         Protocol: HTTPS
+  #         Port: 443
+  #         Host: #{host}
+  #         Path: /#{path}
+  #         Query: #{query}
+  #         StatusCode: HTTP_301
+  #     LoadBalancerArn: !Ref LoadBalancer
+  #     Port: 80
+  #     Protocol: HTTP
 
   # #### ALB Security Group
   #
@@ -127,6 +117,136 @@ Resources:
           IpProtocol: "tcp"
           FromPort: "443"
           ToPort: "443"
+
+  # #### RedirectionRule Lambda Function
+  #
+  # This lambda function will make the API calls required to create and delete a redirection
+  # listener. 
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    DependsOn:
+    - LoadBalancer
+    - LambdaRole
+    Properties:
+      Handler: index.handler
+      Description: ELBv2 Redirection CloudFormation Custom Resource
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: 'python3.6'
+      Timeout: '60'
+      Code:
+        ZipFile: !Sub
+        - |
+          import boto3
+          import json
+          import cfnresponse
+          msg = ""
+          def handler(event, context):
+            client = boto3.client('elbv2')
+            if event["RequestType"] == "Create":
+              response = client.create_listener(
+                LoadBalancerArn='${LoadBalancerArn}',
+                Protocol='HTTP',
+                Port=80,
+                DefaultActions=[{
+                  'Type': 'redirect',
+                  'RedirectConfig': {
+                    'Protocol': 'HTTPS',
+                    'Port': '443',
+                    'Host': '#{host}',
+                    'Path': '/#{path}',
+                    'Query': '#{query}',
+                    'StatusCode': 'HTTP_301'
+                  }
+                }]
+              )
+              msg = "Redirect Listener Created"
+            elif event["RequestType"] == "Delete":
+              listenersResp = client.describe_listeners( LoadBalancerArn='${LoadBalancerArn}' )
+              listenerArn = ""
+              for l in listenersResp['Listeners']:
+                if l['Port'] == 80:
+                  listenerArn = l['ListenerArn']
+              if listenerArn != "":
+                response = client.delete_listener( ListenerArn=listenerArn )
+                msg = "Redirect Listener Deleted"
+              else:
+                msg = "Could not find listener on port 80 to delete"
+            else:
+              msg = "Unknown Event: " + event["RequestType"]
+            
+            responseData = {}
+            responseData['Data'] = msg
+            cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData, "arn:aws:uits.arizona.edu:ecs:httpsredirect")
+        - LoadBalancerArn: !Ref LoadBalancer
+
+  # #### CloudWatch Logs Group
+  #
+  # Create a CloudWatch Log Group for this Lambda function to log to. This allows us to set 
+  # the retention timeframe and delete it with the stack.
+  LambdaLogGroup: 
+    Type: "AWS::Logs::LogGroup"
+    DependsOn:
+    - LambdaFunction
+    Properties: 
+      LogGroupName: !Sub "/aws/lambda/${LambdaFunction}"
+      RetentionInDays: 7
+
+  # #### Custom Resource to call our Lambda Function
+  #
+  # After the lambda function is created, we need to actually call it.
+  CreateRedirectListener:
+    Type: Custom::RedirectListener
+    DependsOn:
+    - LambdaFunction
+    - LambdaLogGroup
+    Properties:
+      ServiceToken: !GetAtt LambdaFunction.Arn
+
+  # ### Lambda Role
+  #
+  # This role allows a Lambda function to perform the required AWS actions.
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: cloudwatch-logs-access
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Sid: cloudwatchlogsaccess
+            Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:Describe*
+            - logs:PutLogEvents
+            Resource:
+            - "*"
+          - Sid: ELBCreateListener
+            Effect: Allow
+            Action:
+            - elasticloadbalancing:CreateListener
+            - elasticloadbalancing:DescribeListeners
+            Resource:
+            - "*"
+          - Sid: ELBDeleteListener
+            Effect: Allow
+            Action:
+            - elasticloadbalancing:DeleteListener
+            Resource:
+            - Fn::Sub: 
+              - "arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:listener/${LoadBalancerName}/*"
+              - LoadBalancerName: !GetAtt LoadBalancer.LoadBalancerFullName
 
 
 # Outputs

@@ -63,6 +63,8 @@ That's it! Save it and you're good to go. Make sure your ALB security group allo
 
 Unfortunately, there is no CloudFormation support for these new features yet. If you have an AWS support rep let them know to add this as a feature request!
 
+**! Update ! 2018-09-19**
 
+I've come up with a [Lambda based solution for adding redirection listeners][lambdaredirect] from within a CloudFormation template. Its not ideal but it does work and should serve as a bridge until AWS releases proper CloudFormation support.
 
-
+[lambdaredirect]: /technica/2018/aws-alb-redirects-cfn-lambda/
