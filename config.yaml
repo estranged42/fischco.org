@@ -21,8 +21,8 @@ params:
 
     enableEmoji: true
 
-    pygmentsCodefences: true
-    pygmentsOptions: "linenos=inline"
+    pygmentsCodeFences: true
+    pygmentsOptions: "linenos=table"
 
 # Optional Params
     categoriesByCount   : true
