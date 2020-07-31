@@ -23,6 +23,20 @@ categories:
 
 <!--more-->
 
+**! Update ! 2018-12-28**
+
+Amazon added CloudFormation support for the new ALB features in late November 2018, so the Lambda based solution is no longer needed. I was almost right in my guessed tempalte syntax, I just missed that you'll need to quote some of the values to avoid YAML parsing errors.
+
+While the following solution is no longer needed, it provides a useful framework for executing AWS API calls from within a CloudFormation template. There will likely always continue to be things you can't quite do with direct CloudFormation syntax, so the following post still has some value I think.
+
+Here is the updated CloudFormation template with redirection listener:
+
+<a href="/technica/2018/alb-redirect/alb-redirect.yaml">
+<img src="/images/cloudformation.png" style="text-align: center;"> ALB Redirection CloudFormation Template Example
+</a>
+
+The original post follows:
+
 [announcement]: https://aws.amazon.com/about-aws/whats-new/2018/07/elastic-load-balancing-announces-support-for-redirects-and-fixed-responses-for-application-load-balancer/
 
 > Note this is a follow on to my previous post about [Application Load Balancer Redirection][albpost] rules. This post assumes you've either read that have a good familiarity with it.
@@ -68,19 +82,19 @@ By deploying the Lambda function in the same template you're using to deploy the
 
 I usually start with the AWS CLI tool, as it is usually faster to iterate when trying to figure out what exactly I need to do. The CLI syntax corresponds very closely to the actual API SDKs, so there's not much translation involved. I eventually figured out that the following CLI command worked to create my redirection listener.
 
-``` bash
+{{< highlight bash >}}
 aws elbv2 create-listener --profile myprofile --region us-west-2 \
   --load-balancer-arn arn:aws:elasticloadbalancing:us-west-2:000000000000:loadbalancer/app/your-load-balancer/somehexstuff \
   --protocol HTTP \
   --port 80 \
   --default-actions Type=redirect,RedirectConfig='{Protocol=HTTPS,Port=443,Host="#{host}",Path="/#{path}",Query="#{query}",StatusCode=HTTP_301}'
-```
+{{< /highlight >}}
 
 In the specific case of load balancers and redirection rules, I need to be able to call the `elbv2` API to call the `create_listener` method. The AWS API is always updated with support for new features, as AWS is an API driven company. API comes first, then other things like the web console and CloudFormation support. So falling back to the API is always an option.
 
 Since the code we need to call this API ends up being pretty short, I was able to simply include the python code right inline within the CloudFormation template. This avoids needing to stage your code in an S3 bucket prior to deployment. You can see the similarities between the structure of the CLI command and the Python SDK.
 
-``` python
+{{< highlight python >}}
 import boto3
 def handler(event, context):
   client = boto3.client('elbv2')
@@ -100,7 +114,7 @@ def handler(event, context):
       }
     }]
   )
-```
+{{< /highlight >}}
 
 Above is the core of what we're doing to add the redirection listener. We need to know the ARN of the load balancer to add this action to, and then we just need to configure the action as above. The `Protocol` and `Port` parameters refer to the listener itself. So this listener will be an HTTP listener and listen on port 80. This makes sense as we want to accept plain HTTP traffic on this port, and then redirect it to an HTTPS version.
 
@@ -112,86 +126,87 @@ CloudFormation will call your lambda function each time there is a create, updat
 
 There's always an `event` object passed in to your lambda function, and the structure of a CloudFormation event looks something like this. (this is taken from the sample events in the lambda console)
 
-``` json
+{{< highlight json >}}
 {
   "StackId": "arn:aws:cloudformation:us-west-2:EXAMPLE/stack-name/guid",
   "ResponseURL": "http://pre-signed-S3-url-for-response",
   "ResourceProperties": {
-    "StackName": "stack-name"
-  },
+  "StackName": "stack-name"
+},
   "RequestType": "Create",
   "ResourceType": "Custom::TestResource",
   "ServiceToken": "arn:aws:lambda:us-west-2:EAMPLE:function:lambdafunctionname",
   "LogicalResourceId": "MyTestResource"
 }
-```
+{{< /highlight >}}
 
 This allows us a way to pick up on the `RequestType` and do something different for a `Create` and `Delete`.
 
 Below is the entire block of code embedded in the CloudFormation Lambda resource:
 
-```
-  # #### RedirectionRule Lambda Function
-  #
-  # This lambda function will make the API calls required to create and delete a redirection
-  # listener. 
-  LambdaFunction:
-    Type: AWS::Lambda::Function
-    DependsOn:
-    - LoadBalancer
-    - LambdaRole
-    Properties:
-      Handler: index.handler
-      Description: ELBv2 Redirection CloudFormation Custom Resource
-      Role: !GetAtt LambdaRole.Arn
-      Runtime: 'python3.6'
-      Timeout: '60'
-      Code:
-        ZipFile: !Sub
-        - |
-          import boto3
-          import json
-          import cfnresponse
-          msg = ""
-          def handler(event, context):
-            client = boto3.client('elbv2')
-            if event["RequestType"] == "Create":
-              response = client.create_listener(
-                LoadBalancerArn='${LoadBalancerArn}',
-                Protocol='HTTP',
-                Port=80,
-                DefaultActions=[{
-                  'Type': 'redirect',
-                  'RedirectConfig': {
-                    'Protocol': 'HTTPS',
-                    'Port': '443',
-                    'Host': '#{host}',
-                    'Path': '/#{path}',
-                    'Query': '#{query}',
-                    'StatusCode': 'HTTP_301'
-                  }
-                }]
-              )
-              msg = "Redirect Listener Created"
-            elif event["RequestType"] == "Delete":
-              listenersResp = client.describe_listeners( LoadBalancerArn='${LoadBalancerArn}' )
-              listenerArn = ""
-              for l in listenersResp['Listeners']:
-                if l['Port'] == 80:
-                  listenerArn = l['ListenerArn']
-              if listenerArn != "":
-                response = client.delete_listener( ListenerArn=listenerArn )
-                msg = "Redirect Listener Deleted"
-              else:
-                msg = "Could not find listener on port 80 to delete"
+{{< highlight yaml >}}
+# #### RedirectionRule Lambda Function
+#
+# This lambda function will make the API calls required to create and delete a redirection
+# listener. 
+LambdaFunction:
+  Type: AWS::Lambda::Function
+  DependsOn:
+  - LoadBalancer
+  - LambdaRole
+  Properties:
+    Handler: index.handler
+    Description: ELBv2 Redirection CloudFormation Custom Resource
+    Role: !GetAtt LambdaRole.Arn
+    Runtime: 'python3.6'
+    Timeout: '60'
+    Code:
+      ZipFile: !Sub
+      - |
+        import boto3
+        import json
+        import cfnresponse
+        msg = ""
+        def handler(event, context):
+          client = boto3.client('elbv2')
+          if event["RequestType"] == "Create":
+            response = client.create_listener(
+              LoadBalancerArn='${LoadBalancerArn}',
+              Protocol='HTTP',
+              Port=80,
+              DefaultActions=[{
+                'Type': 'redirect',
+                'RedirectConfig': {
+                  'Protocol': 'HTTPS',
+                  'Port': '443',
+                  'Host': '#{host}',
+                  'Path': '/#{path}',
+                  'Query': '#{query}',
+                  'StatusCode': 'HTTP_301'
+                }
+              }]
+            )
+            msg = "Redirect Listener Created"
+          elif event["RequestType"] == "Delete":
+            listenersResp = client.describe_listeners( LoadBalancerArn='${LoadBalancerArn}' )
+            listenerArn = ""
+            for l in listenersResp['Listeners']:
+              if l['Port'] == 80:
+                listenerArn = l['ListenerArn']
+            if listenerArn != "":
+              response = client.delete_listener( ListenerArn=listenerArn )
+              msg = "Redirect Listener Deleted"
             else:
-              msg = "Unknown Event: " + event["RequestType"]
-            
-            responseData = {}
-            responseData['Data'] = msg
-            cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData, "arn:aws:uits.arizona.edu:ecs:httpsredirect")
-        - LoadBalancerArn: !Ref LoadBalancer
-```
+              msg = "Could not find listener on port 80 to delete"
+          else:
+            msg = "Unknown Event: " + event["RequestType"]
+          
+          responseData = {}
+          responseData['Data'] = msg
+          cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData, "arn:aws:uits.arizona.edu:ecs:httpsredirect")
+      - LoadBalancerArn: !Ref LoadBalancer
+{{< /highlight >}}
+
 
 This resource block takes advantage of the [CloudFormation Fn::Sub syntax][cfnsub] to substitue in the ARN of the LoadBalancer resource we build elsewhere in the template. This allows you to create a customized lambda function just for this stack, without having to pass in a bunch of things at runtime.
 
@@ -203,15 +218,16 @@ There's always room for improvement in this function. Astute readers will see th
 
 Creating the Lambda function doesn't actually run the code however. It just creates a lambda function that is ready to be run. To execute our code, we need to call the function by creating a Custom Resource in our template. This turns out to be pretty simple, all we need is the ARN of the lambda function.
 
-```
-  CreateRedirectListener:
-    Type: Custom::RedirectListener
-    DependsOn:
-    - LambdaFunction
-    - LambdaLogGroup
-    Properties:
-      ServiceToken: !GetAtt LambdaFunction.Arn
-```
+{{< highlight cli >}}
+CreateRedirectListener:
+  Type: Custom::RedirectListener
+  DependsOn:
+  - LambdaFunction
+  - LambdaLogGroup
+  Properties:
+    ServiceToken: !GetAtt LambdaFunction.Arn
+{{< /highlight >}}
+
 
 The `Type: Custom::RedirectListener` is what tells CloudFormation this is a custom resource. You're free to use whatever string you want after the `Custom::` part. You should just be consistant within a template.
 
@@ -225,7 +241,7 @@ Those are the main pieces! Below I have attached a complete CloudFormation templ
 
 You can test the redirection in action with a basic cURL command:
 
-```
+{{< highlight bash >}}
 ~ $ curl -I http://yourloadblaancerURL.us-west-2.elb.amazonaws.com
 HTTP/1.1 301 Moved Permanently
 Server: awselb/2.0
@@ -234,9 +250,9 @@ Content-Type: text/html
 Content-Length: 150
 Connection: keep-alive
 Location: https://yourloadblaancerURL.us-west-2.elb.amazonaws.com:443/
-```
+{{< /highlight >}}
 
-<a href="/technica/2018/alb-redirect/alb-redirect.yaml">
+<a href="/technica/2018/alb-redirect/alb-redirect-lambda.yaml">
 <img src="/images/cloudformation.png" style="text-align: center;"> ALB Redirection CloudFormation Template Example
 </a>
 

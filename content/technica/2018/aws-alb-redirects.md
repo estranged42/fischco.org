@@ -59,12 +59,23 @@ Since we just need to redirect HTTP to HTTPS, we'll leave the host, path, and qu
 
 That's it! Save it and you're good to go. Make sure your ALB security group allows both port 80 and 443 traffic, and all your incoming port 80 traffic will now be redirected to 443.
 
-## CloudFormation?
+## CloudFormation
 
-Unfortunately, there is no CloudFormation support for these new features yet. If you have an AWS support rep let them know to add this as a feature request!
+**! Update ! 2018-12-28**
+
+Amazon added CloudFormation support for the new ALB features in late November 2018, so the Lambda based solution is no longer needed. I was almost right in my guessed tempalte syntax, I just missed that you'll need to quote some of the values to avoid YAML parsing errors.
+
+Here is the updated CloudFormation template with redirection listener:
+
+<a href="/technica/2018/alb-redirect/alb-redirect.yaml">
+<img src="/images/cloudformation.png" style="text-align: center;"> ALB Redirection CloudFormation Template Example
+</a>
+
+<s>Unfortunately, there is no CloudFormation support for these new features yet. If you have an AWS support rep let them know to add this as a feature request!</s>
 
 **! Update ! 2018-09-19**
 
 I've come up with a [Lambda based solution for adding redirection listeners][lambdaredirect] from within a CloudFormation template. Its not ideal but it does work and should serve as a bridge until AWS releases proper CloudFormation support.
 
 [lambdaredirect]: /technica/2018/aws-alb-redirects-cfn-lambda/
+
