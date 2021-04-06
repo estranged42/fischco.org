@@ -134,3 +134,8 @@ social:
     twitter_domain : ""
     twitter        : "estranged"
     email          : ""
+
+markup:
+  goldmark:
+    renderer:
+      hardWraps: true
